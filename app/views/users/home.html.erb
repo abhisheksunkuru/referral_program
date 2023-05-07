@@ -1,0 +1,57 @@
+<%if current_user.type == "Admin"%>
+  Hello Admin!
+  <h1>Invite Users</h1>
+  <%=form_tag '/users/invite' do |f|%>
+    <%=label_tag "Email"%>
+    <%=email_field_tag :email%>
+    <%=submit_tag "Invite"%>
+  <%end%>
+  <h3>Referrals  details</h3>
+  <table>
+    <thead>
+      <th>Email</th>
+      <th>Status</th>
+      <th>Resend Count</th>
+      <th>Action</th>
+    </thead>
+    <tbody>
+      <%@referrals.each do |referral|%>
+        <tr>
+          <td><%=referral.email%></td>
+          <td><%=referral.status%></td>
+          <td><%=referral.resend_count%></td>
+          <%if referral.status == "pending" && referral.resend_count < 5 %>
+            <td><%=link_to "Resend",users_resend_invitation_path(id: referral.id) %></td>
+          <%end%>
+        </tr>
+      <%end%>
+    </tbody>
+
+  </table>
+<%else%>
+  Hello User!
+
+  Your details as follows:
+  <table>
+    <thead>
+      <th>first name</th>
+      <th>last name</th>
+      <th>email</th>
+      <th>invited by</th>
+    </thead>
+    <tbody>
+
+        <tr>
+          <td><%=current_user.first_name%></td>
+          <td><%=current_user.last_name%></td>
+          <td><%=current_user.email%></td>
+          <td><%=current_user.referred_by %></td>
+        </tr>
+
+    </tbody>
+
+  </table>
+<%end%>
+
+
+<%= button_to "Logout", destroy_user_session_path, method: :delete%>
